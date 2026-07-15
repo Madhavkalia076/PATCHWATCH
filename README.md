@@ -112,6 +112,7 @@ wired together behind one command:
 patchwatch sample_repo                          # ranked table of findings
 patchwatch sample_repo --min-score 40            # only show priority >= 40
 patchwatch sample_repo --explain                 # + LLM explanation/fix per finding
+patchwatch sample_repo --diff main               # only findings on lines changed since main
 ```
 
 ## Project layout
@@ -148,7 +149,7 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] Reachability engine — BFS/DFS from entry points (`patchwatch/analysis/reachability.py`)
 - [x] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
 - [x] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
-- [ ] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
+- [x] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
 - [x] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
 - [ ] GitHub Action packaging
 - [ ] (stretch) GitHub App + hosted dashboard

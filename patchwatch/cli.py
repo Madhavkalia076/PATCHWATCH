@@ -11,6 +11,7 @@ import os
 import sys
 
 import click
+import git
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -26,6 +27,7 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 from patchwatch.analysis.ast_graph import CallGraph, get_call_graph
 from patchwatch.analysis.reachability import mark_reachability
 from patchwatch.analysis.scoring import score_finding
+from patchwatch.diff.git_diff import filter_to_changed_lines, get_changed_lines
 from patchwatch.llm.client import explain_finding
 from patchwatch.models import Finding
 from patchwatch.scanners.bandit_runner import run_bandit
@@ -46,7 +48,12 @@ _SEVERITY_STYLE = {"LOW": "dim", "MEDIUM": "yellow", "HIGH": "bold red", "CRITIC
     "--min-score", default=0.0, show_default=True,
     help="Only show findings scoring at or above this composite score (0-100).",
 )
-def main(target_dir: str, explain: bool, min_score: float) -> None:
+@click.option(
+    "--diff", "base_ref", default=None,
+    help="Only show findings on lines changed since this git ref (e.g. main). "
+         "Turns a whole-repo scan into a PR-scoped one.",
+)
+def main(target_dir: str, explain: bool, min_score: float, base_ref: str | None) -> None:
     """Scan TARGET_DIR for vulnerabilities, prioritized by real-world reachability."""
     console.print(f"[bold]Scanning {target_dir}...[/bold]")
     findings = run_bandit(target_dir) + run_semgrep(target_dir)
@@ -54,6 +61,19 @@ def main(target_dir: str, explain: bool, min_score: float) -> None:
     if not findings:
         console.print("[green]No findings.[/green]")
         return
+
+    if base_ref:
+        try:
+            changed_lines = get_changed_lines(target_dir, base_ref)
+        except git.exc.GitCommandError:
+            raise click.ClickException(
+                f"Couldn't diff against '{base_ref}' -- is it a valid branch/commit, "
+                f"and is {target_dir} inside a git repo?"
+            )
+        findings = filter_to_changed_lines(findings, changed_lines)
+        if not findings:
+            console.print(f"[green]No findings on lines changed since {base_ref}.[/green]")
+            return
 
     _score_all(findings)
 
