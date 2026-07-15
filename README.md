@@ -97,6 +97,12 @@ know Bandit and Semgrep report things differently.
    warnings (one reachable from a public route, one in dead code) — this is
    the exact gap the reachability engine is designed to fix.
 
+5. (Optional) To use the LLM explain + fix layer, copy `.env.example` to
+   `.env` and fill in a free Groq key (console.groq.com) and/or Gemini key
+   (aistudio.google.com/apikey). Without either key configured, PatchWatch
+   still runs fine — the LLM layer just fails gracefully and reports "LLM
+   explanation unavailable" per finding instead of crashing.
+
 ## Project layout
 
 ```
@@ -130,7 +136,7 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] AST-based call graph builder (`patchwatch/analysis/ast_graph.py`)
 - [x] Reachability engine — BFS/DFS from entry points (`patchwatch/analysis/reachability.py`)
 - [x] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
-- [ ] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
+- [x] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
 - [ ] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
 - [ ] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
 - [ ] GitHub Action packaging
