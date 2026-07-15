@@ -130,7 +130,7 @@ can run as a CI check on every PR:
     fetch-depth: 0   # needed for --diff-base: PRs get a shallow checkout by
                       # default, which won't have the base branch available
 
-- uses: Madhavkalia076/PATCHWATCH@main
+- uses: Madhavkalia076/PATCHWATCH@v1
   with:
     target: .
     diff-base: origin/main   # only scan lines changed in this PR

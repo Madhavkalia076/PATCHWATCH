@@ -2,6 +2,7 @@
 name = "patchwatch"
 version = "0.1.0"
 description = "AI-assisted code review & security vulnerability detector"
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = [
     "bandit>=1.7.9",
