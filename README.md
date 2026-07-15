@@ -103,6 +103,19 @@ know Bandit and Semgrep report things differently.
    still runs fine — the LLM layer just fails gracefully and reports "LLM
    explanation unavailable" per finding instead of crashing.
 
+### A note on sending code to an LLM
+
+`--explain` is opt-in and off by default -- without it, no code ever leaves
+your machine. When it's on, only a small snippet around each finding is
+sent (never the whole file or repo), and anything that looks like a
+hardcoded credential in that snippet is redacted to `***REDACTED***` before
+it's sent (`patchwatch/llm/prompts.py`) -- best-effort, not a guarantee,
+since regex-based secret detection can miss unusual formats. Worth knowing:
+Gemini's free tier may use submitted data to improve Google's models (their
+paid tier doesn't); Groq does not train on API data. If you're running
+`--explain` against proprietary code, factor that into which provider(s)
+you configure.
+
 ## Usage
 
 The full pipeline (scan → reachability → scoring → optional LLM explain) is
