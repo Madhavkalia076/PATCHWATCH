@@ -39,3 +39,12 @@ def internal_debug_helper():
 
 
 API_KEY = "sk-test-hardcoded-secret-12345"  # VULNERABLE: hardcoded secret
+
+
+@app.get("/lookup")
+def lookup_user(user_id: str):
+    # VULNERABLE: new endpoint, same SQL injection pattern as get_user above --
+    # this is what the PR-gate demo is meant to catch.
+    conn = get_connection()
+    query = "SELECT * FROM users WHERE id = '" + user_id + "'"
+    return conn.execute(query).fetchall()
