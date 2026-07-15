@@ -1,0 +1,20 @@
+name: PatchWatch PR gate
+
+on:
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # required so --diff-base can see the PR's base branch
+
+      - name: Scan changed lines only
+        uses: ./
+        with:
+          target: sample_repo
+          diff-base: origin/${{ github.base_ref }}
+          min-score: '20'
+          fail-on-findings: 'true'
