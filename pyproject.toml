@@ -1,0 +1,25 @@
+[project]
+name = "patchwatch"
+version = "0.1.0"
+description = "AI-assisted code review & security vulnerability detector"
+requires-python = ">=3.10"
+dependencies = [
+    "bandit>=1.7.9",
+    "semgrep>=1.78.0",
+    "pydantic>=2.7",
+    "click>=8.1",
+    "groq>=0.9.0",
+    "google-genai>=0.3.0",
+    "gitpython>=3.1",
+    "rich>=13.7",
+]
+
+[project.scripts]
+patchwatch = "patchwatch.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["patchwatch*"]
