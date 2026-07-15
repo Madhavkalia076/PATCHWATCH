@@ -127,7 +127,7 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] Shared `Finding` schema (`patchwatch/models.py`)
 - [x] Bandit runner + normalizer (`patchwatch/scanners/bandit_runner.py`)
 - [x] Semgrep runner + normalizer (`patchwatch/scanners/semgrep_runner.py`)
-- [ ] AST-based call graph builder (`patchwatch/analysis/ast_graph.py`)
+- [x] AST-based call graph builder (`patchwatch/analysis/ast_graph.py`)
 - [ ] Reachability engine — BFS/DFS from entry points (`patchwatch/analysis/reachability.py`)
 - [ ] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
 - [ ] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
