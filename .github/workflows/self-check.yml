@@ -1,0 +1,21 @@
+name: PatchWatch self-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # sample_repo is intentionally vulnerable (see README) -- this job
+      # proves the Action itself runs correctly end-to-end, it's not a
+      # security gate on this repo's own code, so fail-on-findings is off.
+      - name: Run PatchWatch against the sample app
+        uses: ./
+        with:
+          target: sample_repo
+          fail-on-findings: 'false'

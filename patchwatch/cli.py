@@ -53,7 +53,15 @@ _SEVERITY_STYLE = {"LOW": "dim", "MEDIUM": "yellow", "HIGH": "bold red", "CRITIC
     help="Only show findings on lines changed since this git ref (e.g. main). "
          "Turns a whole-repo scan into a PR-scoped one.",
 )
-def main(target_dir: str, explain: bool, min_score: float, base_ref: str | None) -> None:
+@click.option(
+    "--fail-on-findings", is_flag=True,
+    help="Exit with a non-zero status if any findings remain after filtering -- "
+         "for use as a CI gate (e.g. the GitHub Action). Off by default so "
+         "local runs are just a report, not a build failure.",
+)
+def main(
+    target_dir: str, explain: bool, min_score: float, base_ref: str | None, fail_on_findings: bool
+) -> None:
     """Scan TARGET_DIR for vulnerabilities, prioritized by real-world reachability."""
     console.print(f"[bold]Scanning {target_dir}...[/bold]")
     findings = run_bandit(target_dir) + run_semgrep(target_dir)
@@ -88,6 +96,9 @@ def main(target_dir: str, explain: bool, min_score: float, base_ref: str | None)
             explain_finding(finding)
 
     _print_report(findings, target_dir, explain)
+
+    if fail_on_findings and findings:
+        sys.exit(1)
 
 
 def _score_all(findings: list[Finding]) -> None:

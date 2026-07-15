@@ -115,6 +115,35 @@ patchwatch sample_repo --explain                 # + LLM explanation/fix per fin
 patchwatch sample_repo --diff main               # only findings on lines changed since main
 ```
 
+Any CLI run can also fail the process (exit code 1) instead of just reporting,
+with `--fail-on-findings` -- off by default so a local run is just a report,
+not a build failure.
+
+## GitHub Action
+
+PatchWatch is also packaged as a composite GitHub Action (`action.yml`), so it
+can run as a CI check on every PR:
+
+```yaml
+- uses: actions/checkout@v4
+  with:
+    fetch-depth: 0   # needed for --diff-base: PRs get a shallow checkout by
+                      # default, which won't have the base branch available
+
+- uses: Madhavkalia076/PATCHWATCH@main
+  with:
+    target: .
+    diff-base: origin/main   # only scan lines changed in this PR
+    min-score: '40'
+    explain: 'true'
+    groq-api-key: ${{ secrets.GROQ_API_KEY }}
+    gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+```
+
+`fail-on-findings` defaults to `true` for the Action (unlike the CLI default),
+since the whole point of running this in CI is to actually block a PR that
+introduces a reachable vulnerability.
+
 ## Project layout
 
 ```
@@ -151,5 +180,5 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
 - [x] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
 - [x] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
-- [ ] GitHub Action packaging
+- [x] GitHub Action packaging
 - [ ] (stretch) GitHub App + hosted dashboard

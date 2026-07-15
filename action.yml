@@ -1,0 +1,74 @@
+name: 'PatchWatch'
+description: >-
+  AI-assisted security scanner (Bandit + Semgrep) with reachability-based
+  prioritization -- ranks findings by whether an attacker can actually reach
+  them, not just by scanner severity.
+author: 'Madhavkalia076'
+branding:
+  icon: 'shield'
+  color: 'red'
+
+inputs:
+  target:
+    description: 'Directory to scan.'
+    required: false
+    default: '.'
+  diff-base:
+    description: >-
+      Git ref to diff against for PR-scoped scanning (e.g. origin/main).
+      Leave empty to scan the whole target directory every run.
+    required: false
+    default: ''
+  min-score:
+    description: 'Only report findings scoring at or above this composite score (0-100).'
+    required: false
+    default: '0'
+  explain:
+    description: >-
+      Get an LLM explanation + suggested fix per finding. Requires
+      groq-api-key and/or gemini-api-key to be set, otherwise every
+      explanation just reports "unavailable".
+    required: false
+    default: 'false'
+  fail-on-findings:
+    description: 'Fail this workflow step if any findings remain after filtering.'
+    required: false
+    default: 'true'
+  groq-api-key:
+    description: 'Groq API key, used first for LLM explanations (free tier).'
+    required: false
+    default: ''
+  gemini-api-key:
+    description: 'Gemini API key, used as a fallback if Groq fails or is unset (free tier).'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install PatchWatch
+      shell: bash
+      run: pip install "${{ github.action_path }}"
+
+    - name: Run PatchWatch
+      shell: bash
+      env:
+        GROQ_API_KEY: ${{ inputs.groq-api-key }}
+        GEMINI_API_KEY: ${{ inputs.gemini-api-key }}
+      run: |
+        set -- "${{ inputs.target }}" --min-score "${{ inputs.min-score }}"
+        if [ -n "${{ inputs.diff-base }}" ]; then
+          set -- "$@" --diff "${{ inputs.diff-base }}"
+        fi
+        if [ "${{ inputs.explain }}" = "true" ]; then
+          set -- "$@" --explain
+        fi
+        if [ "${{ inputs.fail-on-findings }}" = "true" ]; then
+          set -- "$@" --fail-on-findings
+        fi
+        patchwatch "$@"
