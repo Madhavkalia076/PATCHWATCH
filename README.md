@@ -103,6 +103,17 @@ know Bandit and Semgrep report things differently.
    still runs fine — the LLM layer just fails gracefully and reports "LLM
    explanation unavailable" per finding instead of crashing.
 
+## Usage
+
+The full pipeline (scan → reachability → scoring → optional LLM explain) is
+wired together behind one command:
+
+```bash
+patchwatch sample_repo                          # ranked table of findings
+patchwatch sample_repo --min-score 40            # only show priority >= 40
+patchwatch sample_repo --explain                 # + LLM explanation/fix per finding
+```
+
 ## Project layout
 
 ```
@@ -138,6 +149,6 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
 - [x] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
 - [ ] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
-- [ ] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
+- [x] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
 - [ ] GitHub Action packaging
 - [ ] (stretch) GitHub App + hosted dashboard
