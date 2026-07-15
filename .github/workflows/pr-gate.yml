@@ -18,3 +18,6 @@ jobs:
           diff-base: origin/${{ github.base_ref }}
           min-score: '20'
           fail-on-findings: 'true'
+          explain: 'true'
+          groq-api-key: ${{ secrets.GROQ_API_KEY }}
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
