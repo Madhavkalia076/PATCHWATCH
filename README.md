@@ -129,7 +129,7 @@ The vulnerabilities in this file are intentional; don't "fix" them.
 - [x] Semgrep runner + normalizer (`patchwatch/scanners/semgrep_runner.py`)
 - [x] AST-based call graph builder (`patchwatch/analysis/ast_graph.py`)
 - [x] Reachability engine — BFS/DFS from entry points (`patchwatch/analysis/reachability.py`)
-- [ ] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
+- [x] Composite scoring algorithm (`patchwatch/analysis/scoring.py`)
 - [ ] LLM explain + fix layer (`patchwatch/llm/client.py`, `patchwatch/llm/prompts.py`)
 - [ ] Git diff parsing — scan only changed lines (`patchwatch/diff/git_diff.py`)
 - [ ] CLI entrypoint wiring it all together (`patchwatch/cli.py`)
